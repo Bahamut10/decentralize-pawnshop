@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-open-sans;
+}
+
+.wrapper {
+  @apply container mx-auto py-10;
+}
