@@ -7,18 +7,13 @@ type TextProps = {
   className?: string;
   style?: object;
   variant: TextVariants;
-  font?: 'space-mono' | 'work-sans';
 };
 
 export default function Text(props: TextProps) {
-  const { as, children, className, variant, font, ...restProps } = props;
+  const { as, children, className, variant, ...restProps } = props;
 
   const Element = as ?? variant.element;
-  const combinedClassName = clsx(
-    variant.className,
-    className,
-    font ? `font-${font}` : 'font-space-mono'
-  );
+  const combinedClassName = clsx(variant.className, className);
 
   return (
     <Element className={combinedClassName} {...restProps}>
