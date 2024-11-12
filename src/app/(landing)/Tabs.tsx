@@ -2,17 +2,23 @@
 
 import Button from '@/components/Button';
 import { BUTTON_SIZES, BUTTON_VARIANTS } from '@/components/Button/enum';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { PAWN, REDEEM } from './page';
 
-const PAWN = 'PAWN';
-const REDEEM = 'REDEEM';
+type TabsProps = {
+  active: typeof PAWN | typeof REDEEM;
+  setActive: (key: typeof PAWN | typeof REDEEM) => void;
+};
 
-export default function Tabs() {
-  const [active, setActive] = useState(PAWN);
+export default function Tabs(props: TabsProps) {
+  const { active, setActive } = props;
 
-  const handleOnSwitchTab = useCallback((key: typeof PAWN | typeof REDEEM) => {
-    setActive(key);
-  }, []);
+  const handleOnSwitchTab = useCallback(
+    (key: typeof PAWN | typeof REDEEM) => {
+      setActive(key);
+    },
+    [setActive]
+  );
 
   return (
     <div className="flex shadow-lg rounded-lg">
@@ -24,7 +30,7 @@ export default function Tabs() {
           active === PAWN ? '!bg-main-blue text-white' : ''
         }`}
       >
-        I want to pawn
+        I Want to Pawn
       </Button>
       <Button
         variant={BUTTON_VARIANTS.GHOST}
@@ -34,7 +40,7 @@ export default function Tabs() {
           active === REDEEM ? '!bg-main-blue text-white' : ''
         }`}
       >
-        I want to redeem
+        I Want to Redeem
       </Button>
     </div>
   );
