@@ -1,9 +1,9 @@
 'use client';
 
-import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-import { liskSepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { config } from '../../rainbowkit-config';
 
 export default function Provider({
   children,
@@ -11,14 +11,6 @@ export default function Provider({
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
-
-  const config = getDefaultConfig({
-    appName: 'Decentralized Pawnshop',
-    projectId: process.env.NEXT_PUBLIC_RAINBOWKIT_REOWN_PROJECT_ID || '',
-    chains: [liskSepolia],
-    // ssr: true, // If your dApp uses server side rendering (SSR)
-  });
-
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
