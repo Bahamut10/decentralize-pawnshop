@@ -2,7 +2,7 @@
 
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-import { lisk, liskSepolia } from 'wagmi/chains';
+import { liskSepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 export default function Provider({
