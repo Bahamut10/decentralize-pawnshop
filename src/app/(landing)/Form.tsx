@@ -3,10 +3,10 @@ import { BUTTON_SIZES, BUTTON_VARIANTS } from '@/components/Button/enum';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
 import { useMemo } from 'react';
-import { PAWN, REDEEM } from './page';
+import { PAWN, REDEEM } from './enum';
 
 type FormProps = {
-  active: typeof PAWN | typeof REDEEM;
+  active: typeof PAWN | typeof REDEEM | string;
 };
 
 function PawnForm() {
@@ -47,7 +47,7 @@ function RedeemForm() {
   );
 }
 
-export default function Form(props) {
+export default function Form(props: FormProps) {
   const { active } = props;
 
   return (

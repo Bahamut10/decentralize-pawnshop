@@ -3,10 +3,10 @@
 import Button from '@/components/Button';
 import { BUTTON_SIZES, BUTTON_VARIANTS } from '@/components/Button/enum';
 import { useCallback } from 'react';
-import { PAWN, REDEEM } from './page';
+import { PAWN, REDEEM } from './enum';
 
 type TabsProps = {
-  active: typeof PAWN | typeof REDEEM;
+  active: typeof PAWN | typeof REDEEM | string;
   setActive: (key: typeof PAWN | typeof REDEEM) => void;
 };
 

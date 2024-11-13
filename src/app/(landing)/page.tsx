@@ -4,9 +4,7 @@ import { useState } from 'react';
 import ConnectWallet from './ConnectWallet';
 import Form from './Form';
 import Tabs from './Tabs';
-
-export const PAWN = 'PAWN';
-export const REDEEM = 'REDEEM';
+import { PAWN } from './enum';
 
 export default function LandingPage() {
   const [active, setActive] = useState(PAWN);
