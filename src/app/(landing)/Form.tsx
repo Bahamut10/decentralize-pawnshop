@@ -47,7 +47,7 @@ function RedeemForm() {
   );
 }
 
-export default function Form(props) {
+export default function Form(props: FormProps) {
   const { active } = props;
 
   return (
