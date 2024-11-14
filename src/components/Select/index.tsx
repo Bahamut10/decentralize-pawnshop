@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { PawnItem } from '@/app/(landing)/types';
 import {
   Label,
   Listbox,
@@ -12,14 +12,14 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 type SelectProps = {
   label: string;
+  selected: PawnItem;
+  setSelected: (val: PawnItem) => void;
   className?: string;
-  menuItem: Array<string>;
+  menuItem: Array<PawnItem>;
 };
 
 export default function Select(props: SelectProps) {
-  const { label, menuItem = [] } = props;
-
-  const [selected, setSelected] = useState(menuItem[0]);
+  const { label, selected, setSelected, menuItem = [] } = props;
 
   return (
     <Listbox value={selected} onChange={setSelected}>
@@ -28,7 +28,7 @@ export default function Select(props: SelectProps) {
       </Label>
       <div className="relative mt-2">
         <ListboxButton className="relative w-full cursor-default rounded-md bg-white py-3 pl-3 pr-10 text-left text-stormy-gray shadow-sm ring-1 ring-inset ring-cloudy-gray focus:outline-none focus:ring-2 focus:ring-cloudy-gray sm:text-sm/6">
-          <span className="ml-3 block truncate">{selected}</span>
+          <span className="ml-3 block truncate">{selected.item}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
             <ChevronUpDownIcon
               aria-hidden="true"
@@ -43,11 +43,11 @@ export default function Select(props: SelectProps) {
         >
           {menuItem.map((item) => (
             <ListboxOption
-              key={item}
+              key={item.item}
               value={item}
               className="group relative cursor-default select-none py-2 pl-3 pr-9 text-stormy-gray data-[focus]:bg-cloudy-gray"
             >
-              <span className="ml-3 block truncate">{item}</span>
+              <span className="ml-3 block truncate">{item.item}</span>
               <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-stormy-gray [.group:not([data-selected])_&]:hidden">
                 <CheckIcon aria-hidden="true" className="h-5 w-5" />
               </span>

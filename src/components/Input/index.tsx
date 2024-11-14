@@ -2,17 +2,19 @@ import clsx from 'clsx';
 
 type InputProps = {
   label: string;
+  labelClassName?: string;
   value?: string | number | readonly string[] | undefined;
   placeholder?: string;
   className?: string;
   readOnly?: boolean;
   currency?: string;
-  onChange?: () => void;
+  onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
 };
 
 export default function Input(props: InputProps) {
   const {
     label,
+    labelClassName,
     value,
     className,
     placeholder = '0.00',
@@ -23,7 +25,12 @@ export default function Input(props: InputProps) {
 
   return (
     <div>
-      <label className="block text-sm/6 font-medium text-stormy-gray">
+      <label
+        className={clsx(
+          'block text-sm/6 font-medium text-stormy-gray',
+          labelClassName
+        )}
+      >
         {label}
       </label>
       <div className="relative mt-2 rounded-md shadow-sm">

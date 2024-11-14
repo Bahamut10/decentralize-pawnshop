@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
-import { montserrat, openSans } from '../../fonts';
-import './globals.scss';
+import { ToastContainer } from 'react-toastify';
 
-import '@rainbow-me/rainbowkit/styles.css';
+import { montserrat, openSans } from '../../fonts';
 import Provider from './Provider';
+import 'react-toastify/dist/ReactToastify.css';
+import './globals.scss';
+import '@rainbow-me/rainbowkit/styles.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -20,7 +22,10 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${openSans.variable} antialiased`}
       >
-        <Provider>{children}</Provider>
+        <Provider>
+          {children}
+          <ToastContainer position="top-center" theme="colored" />
+        </Provider>
       </body>
     </html>
   );
