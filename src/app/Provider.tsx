@@ -3,7 +3,7 @@
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { config } from '../../rainbowkit-config';
+import { config } from '../../web3-utils/rainbowkit-config';
 
 export default function Provider({
   children,
@@ -11,6 +11,7 @@ export default function Provider({
   children: React.ReactNode;
 }>) {
   const queryClient = new QueryClient();
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

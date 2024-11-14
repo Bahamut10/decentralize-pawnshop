@@ -3,6 +3,7 @@ import { BUTTON_SIZES, BUTTON_VARIANTS } from '@/components/Button/enum';
 
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Image from 'next/image';
 
 export default function ConnectWallet() {
   return (
@@ -84,7 +85,7 @@ export default function ConnectWallet() {
                           }}
                         >
                           {chain.iconUrl && (
-                            <img
+                            <Image
                               alt={chain.name ?? 'Chain icon'}
                               src={chain.iconUrl}
                               style={{ width: 20, height: 20 }}
