@@ -8,9 +8,12 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useAccount, useWriteContract } from 'wagmi';
-import { contractConfig } from '../../../web3-utils/wagmi.config';
-import { PAWN, REDEEM, wei } from './enum';
+import { useWriteContract } from 'wagmi';
+import {
+  CONTRACT_OWNER_ADDRESS,
+  contractConfig,
+} from '../../../web3-utils/wagmi.config';
+import { PAWN, PAWN_PRICE, REDEEM } from './enum';
 import { PawnItem } from './types';
 
 type FormProps = {
@@ -30,8 +33,8 @@ function PawnForm() {
         usdtValue: 1200,
       },
       {
-        item: '1gr Gold',
-        usdtValue: 120,
+        item: '10gr Gold',
+        usdtValue: 1200,
       },
       {
         item: 'Car',
@@ -54,17 +57,16 @@ function PawnForm() {
   );
 
   const [selected, setSelected] = useState(_menuItem[0]);
-  const { address } = useAccount();
-  const { failureReason, writeContract } = useWriteContract();
+  const { isPending, isSuccess, writeContract } = useWriteContract();
   // const { data } = useReadContract();
 
   const handlePawn = useCallback(async () => {
-    writeContract({
+    await writeContract({
       ...contractConfig,
-      functionName: 'transferShares',
-      args: [address, selected.usdtValue],
+      functionName: 'buyShares',
+      args: [selected.usdtValue / PAWN_PRICE],
     });
-  }, [address, selected.usdtValue, writeContract]);
+  }, [selected.usdtValue, writeContract]);
 
   const handleSetSelected = useCallback(
     (val: PawnItem) => setSelected(val),
@@ -72,8 +74,10 @@ function PawnForm() {
   );
 
   useEffect(() => {
-    console.log(failureReason);
-  }, [failureReason]);
+    if (isSuccess) {
+      toast.success('Your transaction submitted successfully');
+    }
+  }, [isSuccess]);
 
   return (
     <>
@@ -100,7 +104,7 @@ function PawnForm() {
           label="Token Estimation"
           labelClassName="text-right"
           currency="PAWN"
-          value={selected.usdtValue / 100}
+          value={selected.usdtValue / PAWN_PRICE}
           readOnly
         />
       </div>
@@ -108,9 +112,9 @@ function PawnForm() {
         variant={BUTTON_VARIANTS.PRIMARY}
         size={BUTTON_SIZES.MD}
         onClick={handlePawn}
-        disabled={selected.usdtValue === 0}
+        disabled={selected.usdtValue === 0 || isPending}
       >
-        Yes, I Agree to Pawn
+        {isPending ? `We're processing...` : 'Yes, I Agree to Pawn'}
       </Button>
     </>
   );
@@ -119,12 +123,15 @@ function PawnForm() {
 function RedeemForm() {
   const [isRetrieveData, setIsRetrieveData] = useState(false);
   const [txnHash, setTxnHash] = useState('');
+  const [sharesValue, setSharesValue] = useState(0);
 
-  const { data, isFetching, error } = useQuery({
+  const { isPending, isSuccess, writeContract } = useWriteContract();
+
+  const { isFetching, error } = useQuery({
     queryKey: ['getTrxInfo', txnHash],
     queryFn: async () => {
       const res = await fetch(
-        `https://sepolia-blockscout.lisk.com/api/v2/transactions/${txnHash}`
+        `https://sepolia-blockscout.lisk.com/api/v2/transactions/${txnHash}/logs`
       );
       const data = await res.json();
 
@@ -132,14 +139,40 @@ function RedeemForm() {
         toast.error('Something went wrong. Please recheck your input.');
       }
       setIsRetrieveData(false);
+      setSharesValue(data?.items[0]?.decoded?.parameters[1]?.value);
       return data;
     },
     enabled: isRetrieveData,
   });
 
+  const handleRedeem = useCallback(async () => {
+    if (!sharesValue) setIsRetrieveData(true);
+    else
+      await writeContract({
+        ...contractConfig,
+        functionName: 'transferShares',
+        args: [CONTRACT_OWNER_ADDRESS, sharesValue],
+      });
+  }, [sharesValue, writeContract]);
+
+  const renderCTA = useMemo(() => {
+    if (isFetching) return 'Getting Data...';
+    if (isPending) return 'Processing...';
+    if (sharesValue) return 'Redeem';
+    return 'Check Transaction';
+  }, [isFetching, isPending, sharesValue]);
+
   if (error) {
     toast.error('Something Went Wrong. Please try again later.');
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Redeem sucessfully completed.');
+      setTxnHash('');
+      setSharesValue(0);
+    }
+  }, [isSuccess]);
 
   return (
     <>
@@ -155,19 +188,19 @@ function RedeemForm() {
       </div>
       <div className="mb-6">
         <Input
-          label="XYZ Token Sum"
-          value={(data?.value ?? 0) / wei}
+          label="Token Amount"
+          value={sharesValue ?? 0}
           currency="PAWN"
           readOnly
         />
       </div>
       <Button
         variant={BUTTON_VARIANTS.PRIMARY}
-        onClick={() => setIsRetrieveData(true)}
-        disabled={isFetching || !txnHash}
+        onClick={handleRedeem}
+        disabled={isFetching || !txnHash || isPending}
         size={BUTTON_SIZES.MD}
       >
-        {isFetching ? 'Getting Data...' : 'Redeem'}
+        {renderCTA}
       </Button>
     </>
   );
