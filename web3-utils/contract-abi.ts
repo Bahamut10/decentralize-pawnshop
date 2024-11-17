@@ -2,9 +2,9 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: 'string',
-        name: '_itemName',
-        type: 'string',
+        internalType: 'uint256',
+        name: '_tokenValue',
+        type: 'uint256',
       },
       {
         internalType: 'uint256',
@@ -98,23 +98,16 @@ export const abi = [
     type: 'event',
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
     name: 'buyShares',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'itemName',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -151,7 +144,7 @@ export const abi = [
   },
   {
     inputs: [],
-    name: 'totalShares',
+    name: 'tokenValue',
     outputs: [
       {
         internalType: 'uint256',
@@ -163,16 +156,16 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [
+    inputs: [],
+    name: 'totalShares',
+    outputs: [
       {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
-    name: 'transferOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -195,9 +188,15 @@ export const abi = [
   },
   {
     inputs: [],
-    name: 'withdraw',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    name: 'value',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
