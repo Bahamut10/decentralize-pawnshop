@@ -1,23 +1,17 @@
-'use client';
-
-import { useState } from 'react';
-import ConnectWallet from './ConnectWallet';
-import Form from './Form';
-import Tabs from './Tabs';
-import { PAWN } from './enum';
+import Advantages from './Advantages';
+import CTA from './CTA';
+import GetStarted from './GetStarted';
+import Hero from './Hero';
+import WhatWeOffer from './WhatWeOffer';
 
 export default function LandingPage() {
-  const [active, setActive] = useState(PAWN);
-
   return (
-    <div className="wrapper">
-      <div className="flex justify-end">
-        <ConnectWallet />
-      </div>
-      <div className="mt-32 flex flex-col gap-10 justify-center items-center">
-        <Tabs active={active} setActive={setActive} />
-        <Form active={active} />
-      </div>
-    </div>
+    <>
+      <Hero />
+      <Advantages />
+      <WhatWeOffer />
+      <GetStarted />
+      <CTA />
+    </>
   );
 }

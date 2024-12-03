@@ -11,8 +11,8 @@ export default {
   theme: {
     screens,
     fontFamily: {
-      montserrat: ['var(--font-montserrat)', ...fontFamily.serif],
-      'open-sans': ['var(--font-open-sans)', ...fontFamily.sans],
+      roboto: ['var(--font-roboto)', ...fontFamily.serif],
+      poppins: ['var(--font-poppins)', ...fontFamily.sans],
     },
     fontSize: {
       h1: '67px',
@@ -27,9 +27,10 @@ export default {
       transparent: 'transparent',
       white: '#FFFFFF',
       'main-blue': '#2A4D8A',
-      'acrylic-blue': '#5DADEC',
+      'acrylic-blue': '#daecf7',
       'cloudy-gray': '#F2F5F7',
       'stormy-gray': '#6C7A89',
+      'charcoal-gray': '#000401',
       tangerine: '#F7C046',
     },
   },

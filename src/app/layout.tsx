@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { ToastContainer } from 'react-toastify';
 
-import { montserrat, openSans } from '../../fonts';
-import Provider from './Provider';
-import 'react-toastify/dist/ReactToastify.css';
-import './globals.scss';
 import '@rainbow-me/rainbowkit/styles.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { roboto, poppins } from '../../fonts';
+import './globals.scss';
+import Provider from './Provider';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -19,11 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${montserrat.variable} ${openSans.variable} antialiased`}
-      >
+      <body className={`${roboto.variable} ${poppins.variable} antialiased`}>
         <Provider>
+          <Navbar />
           {children}
+          <Footer />
           <ToastContainer position="top-center" theme="colored" />
         </Provider>
       </body>
