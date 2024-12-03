@@ -173,7 +173,27 @@ export const abi = [
           },
           {
             internalType: 'string',
+            name: 'itemtype',
+            type: 'string',
+          },
+          {
+            internalType: 'string',
             name: 'description',
+            type: 'string',
+          },
+          {
+            internalType: 'uint256',
+            name: 'value',
+            type: 'uint256',
+          },
+          {
+            internalType: 'string',
+            name: 'startdate',
+            type: 'string',
+          },
+          {
+            internalType: 'string',
+            name: 'enddate',
             type: 'string',
           },
         ],
@@ -223,7 +243,27 @@ export const abi = [
       },
       {
         internalType: 'string',
+        name: 'itemtype',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
         name: 'description',
+        type: 'string',
+      },
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: 'startdate',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: 'enddate',
         type: 'string',
       },
     ],
@@ -235,7 +275,7 @@ export const abi = [
         type: 'uint256',
       },
     ],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
