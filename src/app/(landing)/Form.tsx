@@ -4,21 +4,24 @@ import Button from '@/components/Button';
 import { BUTTON_SIZES, BUTTON_VARIANTS } from '@/components/Button/enum';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useWriteContract } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import {
   CONTRACT_OWNER_ADDRESS,
   contractConfig,
 } from '../../../web3-utils/wagmi.config';
-import { PAWN, PAWN_PRICE, REDEEM } from './enum';
+import { PAWN, REDEEM } from './enum';
 import { PawnItem } from './types';
 
 type FormProps = {
   active: typeof PAWN | typeof REDEEM | string;
 };
+
+interface NFTMetadata {
+  name: string;
+  description: string;
+}
 
 function PawnForm() {
   // const _menuItem = useMemo(() => ['Smartphone', 'Gold', 'Car', 'Laptop'], []);
@@ -58,20 +61,17 @@ function PawnForm() {
 
   const [selected, setSelected] = useState(_menuItem[0]);
   const { isPending, isSuccess, writeContract } = useWriteContract();
-  // const { data } = useReadContract();
+  const { address } = useAccount();
 
   const handlePawn = useCallback(async () => {
     await writeContract({
       ...contractConfig,
-      functionName: 'buyShares',
-      args: [selected.usdtValue / PAWN_PRICE],
+      functionName: 'mintNFT',
+      args: [address, selected.item, ''],
     });
-  }, [selected.usdtValue, writeContract]);
+  }, [address, selected.item, writeContract]);
 
-  const handleSetSelected = useCallback(
-    (val: PawnItem) => setSelected(val),
-    []
-  );
+  const handleSetSelected = (val: PawnItem) => setSelected(val);
 
   useEffect(() => {
     if (isSuccess) {
@@ -89,25 +89,13 @@ function PawnForm() {
           menuItem={_menuItem}
         />
       </div>
-      <div className="flex items-center gap-3 mb-6">
-        <Input
-          label="Price Estimation"
-          currency="USDT"
-          value={selected.usdtValue}
-          readOnly
-        />
-        <ArrowRightIcon
-          aria-hidden="true"
-          className="inline h-10 w-19 font-bold text-stormy-gray"
-        />
-        <Input
-          label="Token Estimation"
-          labelClassName="text-right"
-          currency="PAWN"
-          value={selected.usdtValue / PAWN_PRICE}
-          readOnly
-        />
-      </div>
+      <Input
+        label="Price Estimation"
+        className="mb-6"
+        currency="USDT"
+        value={selected.usdtValue}
+        readOnly
+      />
       <Button
         variant={BUTTON_VARIANTS.PRIMARY}
         size={BUTTON_SIZES.MD}
@@ -122,82 +110,85 @@ function PawnForm() {
 
 function RedeemForm() {
   const [isRetrieveData, setIsRetrieveData] = useState(false);
-  const [txnHash, setTxnHash] = useState('');
-  const [sharesValue, setSharesValue] = useState(0);
+  const [nftId, setNFTId] = useState('');
+  const [sharesValue, setSharesValue] = useState<NFTMetadata | null>(null);
 
-  const { isPending, isSuccess, writeContract } = useWriteContract();
-
-  const { isFetching, error } = useQuery({
-    queryKey: ['getTrxInfo', txnHash],
-    queryFn: async () => {
-      const res = await fetch(
-        `https://sepolia-blockscout.lisk.com/api/v2/transactions/${txnHash}/logs`
-      );
-      const data = await res.json();
-
-      if (res.status > 400) {
-        toast.error('Something went wrong. Please recheck your input.');
-      }
-      setIsRetrieveData(false);
-      setSharesValue(data?.items[0]?.decoded?.parameters[1]?.value);
-      return data;
+  const { data, isFetching, isFetched } = useReadContract({
+    ...contractConfig,
+    functionName: 'getTokenMetadata',
+    args: [nftId],
+    query: {
+      enabled: isRetrieveData,
     },
-    enabled: isRetrieveData,
   });
 
-  const handleRedeem = useCallback(async () => {
-    if (!sharesValue) setIsRetrieveData(true);
-    else
-      await writeContract({
-        ...contractConfig,
-        functionName: 'transferShares',
-        args: [CONTRACT_OWNER_ADDRESS, sharesValue],
-      });
-  }, [sharesValue, writeContract]);
+  const { address } = useAccount();
+
+  const {
+    writeContract: redeem,
+    isPending,
+    isSuccess: isRedeemSuccess,
+  } = useWriteContract();
+
+  const handleNFTIDChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSharesValue(null);
+    setNFTId(e.target.value);
+  };
 
   const renderCTA = useMemo(() => {
-    if (isFetching) return 'Getting Data...';
     if (isPending) return 'Processing...';
+    if (isFetching) return 'Getting Data...';
     if (sharesValue) return 'Redeem';
     return 'Check Transaction';
   }, [isFetching, isPending, sharesValue]);
 
-  if (error) {
-    toast.error('Something Went Wrong. Please try again later.');
-  }
+  const handleRetrieveNFTData = async () => {
+    if (!sharesValue) {
+      setIsRetrieveData(true);
+    } else {
+      await redeem({
+        ...contractConfig,
+        functionName: 'mintNFT',
+        args: [address, CONTRACT_OWNER_ADDRESS, nftId],
+      });
+    }
+  };
 
   useEffect(() => {
-    if (isSuccess) {
-      toast.success('Redeem sucessfully completed.');
-      setTxnHash('');
-      setSharesValue(0);
+    if (isFetched) {
+      setIsRetrieveData(false);
+      setSharesValue(data as NFTMetadata);
+
+      if (!data) {
+        toast.error('Data Not Found.');
+      }
     }
-  }, [isSuccess]);
+  }, [data, isFetched]);
+
+  useEffect(() => {
+    if (isRedeemSuccess) {
+      setNFTId('');
+      setSharesValue(null);
+    }
+  }, [isRedeemSuccess]);
 
   return (
     <>
       <div className="mb-4">
         <Input
-          label="TXN Hash"
-          value={txnHash}
-          onChange={(e) => {
-            setTxnHash((e.target as HTMLInputElement).value);
-          }}
-          placeholder="Input Your Transaction ID"
+          label="NFT ID"
+          value={nftId}
+          onChange={handleNFTIDChange}
+          placeholder="Input Your NFT ID"
         />
       </div>
       <div className="mb-6">
-        <Input
-          label="Token Amount"
-          value={sharesValue ?? 0}
-          currency="PAWN"
-          readOnly
-        />
+        <Input label="Token Amount" value={sharesValue?.name ?? ''} readOnly />
       </div>
       <Button
         variant={BUTTON_VARIANTS.PRIMARY}
-        onClick={handleRedeem}
-        disabled={isFetching || !txnHash || isPending}
+        onClick={handleRetrieveNFTData}
+        disabled={!nftId || isFetching || isPending}
         size={BUTTON_SIZES.MD}
       >
         {renderCTA}
