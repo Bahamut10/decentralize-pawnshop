@@ -3,6 +3,7 @@ import { BUTTON_SIZES, BUTTON_VARIANTS } from '@/components/Button/enum';
 import Text from '@/components/Text';
 import { TEXT_VARIANTS } from '@/components/Text/enum';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function CTA() {
   return (
@@ -17,7 +18,7 @@ export default function CTA() {
             size={BUTTON_SIZES.MD}
             className="bg-white !text-main-blue hover:!bg-acrylic-blue mt-12"
           >
-            Check Asset Value
+            <Link href="/pawn">Check Asset Value</Link>
           </Button>
         </div>
         <div className="max-laptop:hidden flex-1 relative">

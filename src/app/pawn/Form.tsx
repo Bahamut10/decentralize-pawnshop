@@ -206,6 +206,7 @@ function RedeemForm() {
     if (isRedeemSuccess) {
       setNFTId('');
       setSharesValue(null);
+      toast.success('Successfully Redeemed');
     }
   }, [isRedeemSuccess]);
 
