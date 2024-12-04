@@ -71,15 +71,23 @@ function PawnForm() {
     await writeContract({
       ...contractConfig,
       functionName: 'mintNFT',
-      args: [address, selected.item, ''],
+      args: [
+        address,
+        selected.item,
+        selected.item,
+        '',
+        selected.usdtValue,
+        '',
+        '',
+      ],
     });
-  }, [address, selected.item, writeContract]);
+  }, [address, selected.item, selected.usdtValue, writeContract]);
 
   const handleSetSelected = (val: PawnItem) => setSelected(val);
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success('Your transaction submitted successfully');
+      toast.success('Your transaction is submitted successfully');
     }
   }, [isSuccess]);
 
@@ -113,16 +121,31 @@ function PawnForm() {
 }
 
 function RedeemForm() {
-  const [isRetrieveData, setIsRetrieveData] = useState(false);
   const [nftId, setNFTId] = useState('');
   const [sharesValue, setSharesValue] = useState<NFTMetadata | null>(null);
 
-  const { data, isFetching, isFetched } = useReadContract({
+  const { data: tokenMetadata, refetch: refetchTokenMetadata } =
+    useReadContract({
+      ...contractConfig,
+      functionName: 'getTokenMetadata',
+      args: [nftId],
+      query: {
+        enabled: false,
+      },
+    });
+
+  const {
+    data: owner,
+    refetch: refetchOwner,
+    isFetched: isOwnerFetched,
+    isFetching: isFetchingOwner,
+  } = useReadContract({
     ...contractConfig,
-    functionName: 'getTokenMetadata',
+    functionName: 'ownerOf',
     args: [nftId],
     query: {
-      enabled: isRetrieveData,
+      enabled: false,
+      staleTime: 0,
     },
   });
 
@@ -141,14 +164,16 @@ function RedeemForm() {
 
   const renderCTA = useMemo(() => {
     if (isPending) return 'Processing...';
-    if (isFetching) return 'Getting Data...';
+    if (isFetchingOwner) return 'Getting Data...';
     if (sharesValue) return 'Redeem';
     return 'Check Transaction';
-  }, [isFetching, isPending, sharesValue]);
+  }, [isFetchingOwner, isPending, sharesValue]);
 
-  const handleRetrieveNFTData = async () => {
+  const isAddressMatched = owner === address;
+
+  const handleRetrieveNFTData = useCallback(async () => {
     if (!sharesValue) {
-      setIsRetrieveData(true);
+      refetchOwner();
     } else {
       await redeem({
         ...contractConfig,
@@ -156,18 +181,26 @@ function RedeemForm() {
         args: [address, CONTRACT_OWNER_ADDRESS, nftId],
       });
     }
-  };
+  }, [address, nftId, redeem, refetchOwner, sharesValue]);
 
-  useEffect(() => {
-    if (isFetched) {
-      setIsRetrieveData(false);
-      setSharesValue(data as NFTMetadata);
-
-      if (!data) {
-        toast.error('Data Not Found.');
+  const handleGetTokenMetadata = useCallback(() => {
+    if (owner) {
+      if (!isAddressMatched) {
+        setSharesValue(null);
+        toast.error('The NFT ID you input is not yours');
+      } else {
+        refetchTokenMetadata();
       }
     }
-  }, [data, isFetched]);
+
+    if (isOwnerFetched && !owner) {
+      toast.error('No Data Found!');
+    }
+  }, [isAddressMatched, isOwnerFetched, owner, refetchTokenMetadata]);
+
+  useEffect(() => {
+    handleGetTokenMetadata();
+  }, [handleGetTokenMetadata]);
 
   useEffect(() => {
     if (isRedeemSuccess) {
@@ -175,6 +208,12 @@ function RedeemForm() {
       setSharesValue(null);
     }
   }, [isRedeemSuccess]);
+
+  useEffect(() => {
+    if (tokenMetadata) {
+      setSharesValue(tokenMetadata as NFTMetadata);
+    }
+  }, [nftId, tokenMetadata]);
 
   return (
     <>
@@ -192,7 +231,7 @@ function RedeemForm() {
       <Button
         variant={BUTTON_VARIANTS.PRIMARY}
         onClick={handleRetrieveNFTData}
-        disabled={!nftId || isFetching || isPending || isDisconnected}
+        disabled={!nftId || isFetchingOwner || isPending || isDisconnected}
         size={BUTTON_SIZES.MD}
       >
         {renderCTA}
