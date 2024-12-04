@@ -3,9 +3,60 @@
 @tailwind utilities;
 
 body {
-  @apply font-open-sans;
+  @apply font-poppins text-charcoal-gray;
 }
 
 .wrapper {
-  @apply container mx-auto py-10;
+  @apply container mx-auto p-10 laptop:py-8 laptop:px-10;
+}
+
+.navbar__link {
+  position: relative;
+  &:after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 4px;
+    left: 0;
+    bottom: -8px;
+    transition: 0.3s ease all;
+    background-color: theme('colors.main-blue');
+  }
+
+  &:hover {
+    color: theme('colors.main-blue');
+
+    &:after {
+      width: 100%;
+      transition: 0.3s ease all;
+    }
+  }
+}
+
+.card {
+  @apply flex-1 flex flex-col gap-6 rounded-3xl shadow-xl;
+}
+
+.workingway__point {
+  @apply my-3;
+
+  &:before {
+    @apply content-['✓'] bg-acrylic-blue text-main-blue rounded-full w-6 h-6 inline-flex justify-center items-center mr-3;
+  }
+}
+
+.social__icon {
+  @apply relative text-main-blue flex items-center justify-center;
+
+  &:before {
+    @apply content-[''] absolute w-10 h-10 rounded-full bg-acrylic-blue;
+  }
+
+  &:hover {
+    @apply text-acrylic-blue;
+
+    &:before {
+      @apply bg-main-blue;
+    }
+  }
 }

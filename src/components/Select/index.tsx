@@ -1,6 +1,6 @@
 'use client';
 
-import { PawnItem } from '@/app/(landing)/types';
+import { PawnItem } from '@/app/pawn/types';
 import {
   Label,
   Listbox,

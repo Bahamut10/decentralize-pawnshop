@@ -3,13 +3,9 @@ import clsx from 'clsx';
 type InputProps = {
   label: string;
   labelClassName?: string;
-  value?: string | number | readonly string[] | undefined;
   placeholder?: string;
-  className?: string;
-  readOnly?: boolean;
   currency?: string;
-  onChange?: (e: React.FormEvent<HTMLInputElement>) => void;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input(props: InputProps) {
   const {

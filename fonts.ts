@@ -1,17 +1,17 @@
-import { Montserrat, Open_Sans } from 'next/font/google';
+import { Roboto, Poppins } from 'next/font/google';
 
-const montserrat = Montserrat({
+const roboto = Roboto({
   subsets: ['latin'],
-  variable: '--font-montserrat',
-  weight: ['200', '400', '600', '800'],
+  variable: '--font-roboto',
+  weight: ['300', '500', '700', '900'],
   display: 'swap',
 });
 
-const openSans = Open_Sans({
+const poppins = Poppins({
   subsets: ['latin'],
-  variable: '--font-open-sans',
+  variable: '--font-poppins',
   weight: ['300', '500', '700'],
   display: 'swap',
 });
 
-export { montserrat, openSans };
+export { roboto, poppins };
