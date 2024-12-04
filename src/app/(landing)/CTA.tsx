@@ -22,11 +22,11 @@ export default function CTA() {
         </div>
         <div className="max-laptop:hidden flex-1 relative">
           <Image
-            src="/pawn-workway-dummy.png"
-            alt="women holding a phone"
+            src="/section-4.png"
+            alt="man holding a phone"
             width={0}
             height={0}
-            className="w-full h-auto -bottom-12 absolute"
+            className="w-[600px] max-w-none h-auto -bottom-12 -left-3/4 absolute"
             unoptimized
           />
         </div>

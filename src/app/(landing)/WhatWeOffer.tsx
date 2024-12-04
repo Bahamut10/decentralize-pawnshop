@@ -29,12 +29,11 @@ export default function WhatWeOffer() {
         </div>
         <div className="max-laptop:hidden flex-1 relative">
           <Image
-            src="/pawn-workway-dummy.png"
-            alt="women holding a phone"
+            src="/section-2.svg"
+            alt="preview"
             width={0}
             height={0}
-            className="w-full h-auto absolute"
-            unoptimized
+            className="w-[1000px] max-w-none h-auto object-cover absolute -left-32 -top-10"
           />
         </div>
       </div>
